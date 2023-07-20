@@ -12,7 +12,7 @@ const teamRoutes = (
   done: () => void
 ) => {
   server.get(teampaths.FETCH_TEAM_BY_ID, getTeamHandler);
-  server.post(teampaths.CREATE_TEAM, createTeamHandler);
+  server.post(teampaths.DEFAULT_PATH, createTeamHandler);
   done();
 };
 

@@ -1,13 +1,11 @@
 export const enum userpaths {
-  CREATE_USER = "/user",
-  FETCH_USER_BY_ID = "/user/:id",
-  FETCH_USER_BY_EMAIL = "/user",
+  DEFAULT_PATH = "/",
+  FETCH_USER_BY_ID = "/:id",
 }
 
 export const enum teampaths {
-  CREATE_TEAM = "/team",
-  FETCH_TEAM_BY_ID = "/team/:id",
-  FETCH_TEAM_BY_EMAIL = "/team",
+  DEFAULT_PATH = "/",
+  FETCH_TEAM_BY_ID = "/:id",
 }
 
 export const enum prefixes {

@@ -10,7 +10,7 @@ const userRoutes = (
   options: any,
   done: () => void
 ) => {
-  server.post(userpaths.CREATE_USER, createUserHandler);
+  server.post(userpaths.DEFAULT_PATH, createUserHandler);
   server.get(userpaths.FETCH_USER_BY_ID, getUserHandler);
   done();
 };

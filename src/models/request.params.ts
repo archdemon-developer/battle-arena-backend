@@ -3,3 +3,9 @@ export interface UserParams {
     id: string;
   };
 }
+
+export interface TeamParams {
+  Params: {
+    id: string;
+  };
+}

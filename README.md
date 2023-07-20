@@ -16,6 +16,10 @@ Technologies used in this project are:
 - typescript
 - Node.js
 - Fastify.js
+- Mocha
+- Chai
+- Sinon
+- Istanbul (nyc)
 
   (Technologies used will be updated here as and when added).
 
@@ -83,6 +87,10 @@ Admin Flow:
 - Add tournaments
 - Leaderboards
 - User/Team management - mainly for moderation purposes
+
+Technical Debt:
+
+- Transaction management - In progress
 
 **Optional Features**
 

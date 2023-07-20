@@ -7,7 +7,7 @@ import { createUser, findUserById } from "../services/user.service";
 const createUserHandler = async (
   request: FastifyRequest<{ Body: UserRequest }>,
   reply: FastifyReply
-) => {
+): Promise<void> => {
   const userResponse: UserResponse | ErrorResponse = await createUser(
     request.body
   );
@@ -22,7 +22,7 @@ const createUserHandler = async (
 const getUserHandler = async (
   request: FastifyRequest<UserParams>,
   reply: FastifyReply
-) => {
+): Promise<void> => {
   if (request.params) {
     const userResponse: UserResponse | ErrorResponse = await findUserById(
       request.params.id

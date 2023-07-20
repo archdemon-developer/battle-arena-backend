@@ -1,9 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { build } from "./app";
-import dotenv from "dotenv";
 
 const start = async () => {
-  dotenv.config();
   const server: FastifyInstance = build({
     logger: true,
     ignoreTrailingSlash: true,

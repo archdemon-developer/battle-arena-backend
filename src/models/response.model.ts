@@ -3,7 +3,15 @@ export interface UserResponse {
   email: string;
   id: number;
   createdAt: string;
-  team?: string;
+  team?: TeamResponse;
+}
+
+export interface TeamResponse {
+  teamname: string;
+  email: string;
+  id: number;
+  createdAt: string;
+  users?: UserResponse[];
 }
 
 export interface ErrorResponse {
