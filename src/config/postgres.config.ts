@@ -1,8 +1,7 @@
-// db.ts
-import { Pool } from "pg";
-import { runStartupScripts } from "../utils/startup";
-import path from "path";
 import dotenv from "dotenv";
+import pgPromise, { IDatabase, IMain } from "pg-promise";
+import pg from "pg-promise/typescript/pg-subset";
+import { executeStartupScripts } from "../utils/startup";
 
 dotenv.config();
 
@@ -12,23 +11,8 @@ const postgresConnectionString: string = `postgres://${
   process.env.DATABASE_PORT || "5432"
 )}/${process.env.DATABASE_NAME}?schema=${process.env.DATABASE_SCHEMA}`;
 
-const pool: Pool = new Pool({
-  connectionString: postgresConnectionString,
-});
+const pgp: IMain<{}, pg.IClient> = pgPromise();
 
-const scriptPaths = [
-  path.join(__dirname, "..", "scripts", "schema.sql"),
-  //comment below line if you dont want dummy data
-  path.join(__dirname, "..", "scripts", "data.sql"),
-];
+export const db: IDatabase<{}, pg.IClient> = pgp(postgresConnectionString);
 
-runStartupScripts(scriptPaths, pool)
-  .then((value) => {
-    console.log("startup scripts executed successfully!");
-  })
-  .catch((error) => {
-    console.error("Error running startup scripts : ", error);
-    process.exit(1);
-  });
-
-export default pool;
+executeStartupScripts();

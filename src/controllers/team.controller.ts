@@ -9,7 +9,6 @@ const createTeamHandler = async (
   reply: FastifyReply
 ) => {
   const teamResponse: TeamResponse | ErrorResponse = await createTeam(
-    request.transaction,
     request.body
   );
 

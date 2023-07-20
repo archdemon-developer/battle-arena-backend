@@ -1,27 +1,21 @@
-import { Client, PoolClient, QueryResult } from "pg";
-import pool from "../config/postgres.config";
+import { QueryResult } from "pg";
+import { db } from "../config/postgres.config";
 import { FIND_TEAM_BY_ID, INSERT_TEAM } from "../utils/queries";
 import { TeamRequest } from "../models/request.model";
 import { ErrorResponse, TeamResponse } from "../models/response.model";
-import { FastifyRequest } from "fastify";
+import { ITask } from "pg-promise";
 
-export const createTeam = async (
-  transaction: PoolClient,
-  teamData: TeamRequest
-) => {
-  const client: PoolClient = transaction; // Access the pg Client from the request object
-
-  if (!client) {
-    throw new Error("Transaction not available in the request.");
-  }
-
+export const createTeam = async (teamData: TeamRequest) => {
   try {
-    const queryResult: QueryResult = await pool.query(INSERT_TEAM, [
-      teamData.email,
-      teamData.teamname,
-    ]);
+    const teamResponse: TeamResponse = await db.tx(
+      async (transaction: ITask<{}>) => {
+        return await transaction.one(INSERT_TEAM, [
+          teamData.email,
+          teamData.teamname,
+        ]);
+      }
+    );
 
-    const teamResponse: TeamResponse = queryResult.rows[0];
     return teamResponse;
   } catch (error: unknown) {
     let errorResponse: ErrorResponse = {
@@ -40,11 +34,14 @@ export const createTeam = async (
 };
 
 export const findTeamById = async (id: string) => {
-  const postgresClient: PoolClient = await pool.connect();
   try {
-    const queryResult: QueryResult = await pool.query(FIND_TEAM_BY_ID, [id]);
+    const teamResponse: TeamResponse = await db.tx(
+      async (transaction: ITask<{}>) => {
+        return transaction.one(FIND_TEAM_BY_ID, [id]);
+      }
+    );
 
-    if (queryResult.rowCount < 1) {
+    if (teamResponse === null) {
       let errorResponse: ErrorResponse = {
         errorCode: 101,
         errorMessage: `Team does not exist`,
@@ -52,7 +49,6 @@ export const findTeamById = async (id: string) => {
       return errorResponse;
     }
 
-    const teamResponse: TeamResponse = queryResult.rows[0];
     return teamResponse;
   } catch (error: unknown) {
     let errorResponse: ErrorResponse = {
@@ -67,7 +63,5 @@ export const findTeamById = async (id: string) => {
       };
     }
     return errorResponse;
-  } finally {
-    postgresClient.release();
   }
 };
