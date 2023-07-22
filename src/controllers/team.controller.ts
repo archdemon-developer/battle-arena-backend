@@ -1,41 +1,48 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { TeamRequest } from "../models/request.model";
 import { ErrorResponse, TeamResponse } from "../models/response.model";
-import { createTeam, findTeamById } from "../services/teams.service";
+import { TeamService } from "../services/teams.service";
 import { TeamParams } from "../models/request.params";
+import { container } from "../containers/ioc.container";
 
-const createTeamHandler = async (
-  request: FastifyRequest<{ Body: TeamRequest }>,
-  reply: FastifyReply
-) => {
-  const teamResponse: TeamResponse | ErrorResponse = await createTeam(
-    request.body
-  );
+class TeamController {
+  private teamService: TeamService;
 
-  if ("errorCode" in teamResponse) {
-    reply.code(500).send(teamResponse);
-  } else {
-    reply.code(201).send(teamResponse);
+  constructor() {
+    this.teamService = container.resolve<TeamService>("teamService");
   }
-};
 
-const getTeamHandler = async (
-  request: FastifyRequest<TeamParams>,
-  reply: FastifyReply
-) => {
-  if (request.params) {
-    const teamResponse: TeamResponse | ErrorResponse = await findTeamById(
-      request.params.id
-    );
+  createTeamHandler = async (
+    request: FastifyRequest<{ Body: TeamRequest }>,
+    reply: FastifyReply
+  ) => {
+    const teamResponse: TeamResponse | ErrorResponse =
+      await this.teamService.createTeam(request.body);
 
     if ("errorCode" in teamResponse) {
       reply.code(500).send(teamResponse);
     } else {
-      reply.code(200).send(teamResponse);
+      reply.code(201).send(teamResponse);
     }
-  } else {
-    reply.code(400).send({ message: `invalid user id` });
-  }
-};
+  };
 
-export { createTeamHandler, getTeamHandler };
+  getTeamHandler = async (
+    request: FastifyRequest<TeamParams>,
+    reply: FastifyReply
+  ) => {
+    if (request.params) {
+      const teamResponse: TeamResponse | ErrorResponse =
+        await this.teamService.findTeamById(request.params.id);
+
+      if ("errorCode" in teamResponse) {
+        reply.code(500).send(teamResponse);
+      } else {
+        reply.code(200).send(teamResponse);
+      }
+    } else {
+      reply.code(400).send({ message: `invalid user id` });
+    }
+  };
+}
+
+export default TeamController;

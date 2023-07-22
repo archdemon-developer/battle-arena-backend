@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "nodemon --watch src --ext ts --exec ts-node src/server.ts",
+    "start": "nodemon --watch src --ext ts --exec ts-node src/startup.ts",
     "test": "mocha --require ts-node/register test/**/*.spec.ts",
     "coverage": "nyc --reporter=lcov --reporter=text npm test"
   },

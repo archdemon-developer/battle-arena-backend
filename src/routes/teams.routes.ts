@@ -1,19 +1,21 @@
 import { FastifyInstance } from "fastify";
+import { teampaths } from "../config/paths.config";
+import { Routes } from "./routes.interface";
+import { container } from "../containers/ioc.container";
+import TeamController from "../controllers/team.controller";
 
-import {
-  getTeamHandler,
-  createTeamHandler,
-} from "../controllers/team.controller";
-import { teampaths } from "../utils/paths";
+class TeamRoutes implements Routes {
+  configure = (server: FastifyInstance, options: any, done: () => void) => {
+    server.get(
+      teampaths.FETCH_TEAM_BY_ID,
+      container.resolve<TeamController>("teamController").getTeamHandler
+    );
+    server.post(
+      teampaths.DEFAULT_PATH,
+      container.resolve<TeamController>("teamController").createTeamHandler
+    );
+    done();
+  };
+}
 
-const teamRoutes = (
-  server: FastifyInstance,
-  options: any,
-  done: () => void
-) => {
-  server.get(teampaths.FETCH_TEAM_BY_ID, getTeamHandler);
-  server.post(teampaths.DEFAULT_PATH, createTeamHandler);
-  done();
-};
-
-export default teamRoutes;
+export default TeamRoutes;

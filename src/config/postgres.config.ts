@@ -1,9 +1,5 @@
-import dotenv from "dotenv";
 import pgPromise, { IDatabase, IMain } from "pg-promise";
 import pg from "pg-promise/typescript/pg-subset";
-import { executeStartupScripts } from "../utils/startup";
-
-dotenv.config();
 
 const postgresConnectionString: string = `postgres://${
   process.env.DATABASE_USERNAME
@@ -14,5 +10,3 @@ const postgresConnectionString: string = `postgres://${
 const pgp: IMain<{}, pg.IClient> = pgPromise();
 
 export const db: IDatabase<{}, pg.IClient> = pgp(postgresConnectionString);
-
-executeStartupScripts();
