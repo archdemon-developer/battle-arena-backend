@@ -8,6 +8,7 @@ import UserRoutes from "../routes/users.routes";
 import AppConfig from "../main/app";
 import Server from "../main/server";
 import DbStartup from "../start/run.dbscripts";
+import GlobalErrorHandler from "../errors/global.error.handler";
 
 export const Beans = {
   queryResolver: QueryResolver,
@@ -20,4 +21,5 @@ export const Beans = {
   appConfig: AppConfig,
   serverStartup: Server,
   dbStartup: DbStartup,
+  globalErrorHandler: GlobalErrorHandler,
 };

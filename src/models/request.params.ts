@@ -1,11 +1,3 @@
-export interface UserParams {
-  Params: {
-    id: string;
-  };
-}
-
-export interface TeamParams {
-  Params: {
-    id: string;
-  };
+export interface GetByIdParams {
+  id: string;
 }

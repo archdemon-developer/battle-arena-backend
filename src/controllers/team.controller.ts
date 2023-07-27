@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { TeamRequest } from "../models/request.model";
 import { ErrorResponse, TeamResponse } from "../models/response.model";
 import { TeamService } from "../services/teams.service";
-import { TeamParams } from "../models/request.params";
+import { GetByIdParams } from "../models/request.params";
 import { container } from "../containers/ioc.container";
 
 class TeamController {
@@ -27,7 +27,7 @@ class TeamController {
   };
 
   getTeamHandler = async (
-    request: FastifyRequest<TeamParams>,
+    request: FastifyRequest<{ Params: GetByIdParams }>,
     reply: FastifyReply
   ) => {
     if (request.params) {

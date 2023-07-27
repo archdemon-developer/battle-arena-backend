@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { UserParams } from "../models/request.params";
+import { GetByIdParams } from "../models/request.params";
 import { UserRequest } from "../models/request.model";
 import { ErrorResponse, UserResponse } from "../models/response.model";
 import { UserService } from "../services/user.service";
@@ -27,7 +27,7 @@ class UserController {
   };
 
   getUserHandler = async (
-    request: FastifyRequest<UserParams>,
+    request: FastifyRequest<{ Params: GetByIdParams }>,
     reply: FastifyReply
   ): Promise<void> => {
     if (request.params) {
