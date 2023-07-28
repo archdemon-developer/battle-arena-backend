@@ -19,6 +19,7 @@ Technologies used in this project are:
 - Mocha
 - Chai
 - Sinon
+- Docker (coming soon)
 - Istanbul (nyc)
 
   (Technologies used will be updated here as and when added).
@@ -68,10 +69,14 @@ If you want to see your test coverage, then run:
 
 **Essential Features:**
 
+specific workflows:
+
+- setup github actions
+- swagger/openapi integrations for gateways
+
 User flow:
 
 - Account access (Sign Up, Login) - In progress
-- backend support (as part of a different project, mostly node.js, thinking microservices)
 - Team creation
 - Team members addition
 - Sign in flow - can sign in as individual or as team member.
