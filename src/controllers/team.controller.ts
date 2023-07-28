@@ -16,14 +16,10 @@ class TeamController {
     request: FastifyRequest<{ Body: TeamRequest }>,
     reply: FastifyReply
   ) => {
-    const teamResponse: TeamResponse | ErrorResponse =
-      await this.teamService.createTeam(request.body);
-
-    if ("errorCode" in teamResponse) {
-      reply.code(500).send(teamResponse);
-    } else {
-      reply.code(201).send(teamResponse);
-    }
+    const teamResponse: TeamResponse = await this.teamService.createTeam(
+      request.body
+    );
+    reply.code(201).send(teamResponse);
   };
 
   getTeamHandler = async (
@@ -31,16 +27,10 @@ class TeamController {
     reply: FastifyReply
   ) => {
     if (request.params) {
-      const teamResponse: TeamResponse | ErrorResponse =
-        await this.teamService.findTeamById(request.params.id);
-
-      if ("errorCode" in teamResponse) {
-        reply.code(500).send(teamResponse);
-      } else {
-        reply.code(200).send(teamResponse);
-      }
-    } else {
-      reply.code(400).send({ message: `invalid user id` });
+      const teamResponse: TeamResponse = await this.teamService.findTeamById(
+        request.params.id
+      );
+      reply.code(200).send(teamResponse);
     }
   };
 }

@@ -43,7 +43,7 @@ class AppConfig {
       (error: Error, request: FastifyRequest, reply: FastifyReply) =>
         container
           .resolve<GlobalErrorHandler>("globalErrorHandler")
-          .resolve(error, reply)
+          .resolve(error, request, reply)
     );
     app.register(container.resolve<Routes>("userRoutes").configure, {
       prefix: prefixes.USER_PREFIX,

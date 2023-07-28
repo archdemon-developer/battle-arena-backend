@@ -4,10 +4,13 @@ import { ErrorResponse, TeamResponse } from "../models/response.model";
 import { ITask } from "pg-promise";
 import QueryResolver from "../containers/query.container";
 import { container } from "../containers/ioc.container";
+import { BattleArenaError } from "../errors/battlearena.error";
+import { ErrorCodes, ErrorMessages } from "../constants/error.codes";
+import GenericUtils from "../utils/genric.utils";
 
 export interface TeamService {
-  createTeam: (teamData: TeamRequest) => Promise<TeamResponse | ErrorResponse>;
-  findTeamById: (id: string) => Promise<TeamResponse | ErrorResponse>;
+  createTeam: (teamData: TeamRequest) => Promise<TeamResponse>;
+  findTeamById: (id: string) => Promise<TeamResponse>;
 }
 
 class TeamServiceImpl implements TeamService {
@@ -17,9 +20,7 @@ class TeamServiceImpl implements TeamService {
     this.queryResolver = container.resolve<QueryResolver>("queryResolver");
   }
 
-  public createTeam = async (
-    teamData: TeamRequest
-  ): Promise<TeamResponse | ErrorResponse> => {
+  public createTeam = async (teamData: TeamRequest): Promise<TeamResponse> => {
     try {
       const teamResponse: TeamResponse = await db.tx(
         async (transaction: ITask<{}>) => {
@@ -36,24 +37,17 @@ class TeamServiceImpl implements TeamService {
 
       return teamResponse;
     } catch (error: unknown) {
-      let errorResponse: ErrorResponse = {
-        errorCode: 100,
-        errorMessage: `Unknown error occoured`,
-      };
-
       if (error instanceof Error) {
-        errorResponse = {
-          ...errorResponse,
-          errorMessage: `Error inserting data : ${error.message}`,
-        };
+        throw new BattleArenaError(
+          ErrorCodes.BA_INTERNAL_SERVER_ERROR,
+          ErrorMessages.BA_INTERNAL_SERVER_ERROR
+        );
       }
-      return errorResponse;
+      throw error;
     }
   };
 
-  public findTeamById = async (
-    id: string
-  ): Promise<TeamResponse | ErrorResponse> => {
+  public findTeamById = async (id: string): Promise<TeamResponse> => {
     try {
       const teamResponse: TeamResponse = await db.tx(
         async (transaction: ITask<{}>) => {
@@ -66,27 +60,21 @@ class TeamServiceImpl implements TeamService {
       );
 
       if (teamResponse === null) {
-        let errorResponse: ErrorResponse = {
-          errorCode: 101,
-          errorMessage: `Team does not exist`,
-        };
-        return errorResponse;
+        throw new BattleArenaError(
+          ErrorCodes.BA_BAD_REQUEST,
+          GenericUtils.formatString(ErrorMessages.BA_BAD_REQUEST, id)
+        );
       }
 
       return teamResponse;
     } catch (error: unknown) {
-      let errorResponse: ErrorResponse = {
-        errorCode: 102,
-        errorMessage: `Unknown error occoured`,
-      };
-
       if (error instanceof Error) {
-        errorResponse = {
-          ...errorResponse,
-          errorMessage: `Error finding team : ${error.message}`,
-        };
+        throw new BattleArenaError(
+          ErrorCodes.BA_INTERNAL_SERVER_ERROR,
+          ErrorMessages.BA_INTERNAL_SERVER_ERROR
+        );
       }
-      return errorResponse;
+      throw error;
     }
   };
 }

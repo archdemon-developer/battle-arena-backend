@@ -5,10 +5,13 @@ import { ErrorResponse, UserResponse } from "../models/response.model";
 import { ITask } from "pg-promise";
 import QueryResolver from "../containers/query.container";
 import { container } from "../containers/ioc.container";
+import { BattleArenaError } from "../errors/battlearena.error";
+import { ErrorCodes, ErrorMessages } from "../constants/error.codes";
+import GenericUtils from "../utils/genric.utils";
 
 export interface UserService {
-  createUser: (userData: UserRequest) => Promise<UserResponse | ErrorResponse>;
-  findUserById: (id: string) => Promise<UserResponse | ErrorResponse>;
+  createUser: (userData: UserRequest) => Promise<UserResponse>;
+  findUserById: (id: string) => Promise<UserResponse>;
 }
 
 class UserServiceImpl implements UserService {
@@ -18,9 +21,7 @@ class UserServiceImpl implements UserService {
     this.queryResolver = container.resolve<QueryResolver>("queryResolver");
   }
 
-  createUser = async (
-    userData: UserRequest
-  ): Promise<UserResponse | ErrorResponse> => {
+  createUser = async (userData: UserRequest): Promise<UserResponse> => {
     try {
       const userResponse: UserResponse = await db.tx(
         async (transaction: ITask<{}>) => {
@@ -34,22 +35,17 @@ class UserServiceImpl implements UserService {
 
       return userResponse;
     } catch (error: unknown) {
-      let errorResponse: ErrorResponse = {
-        errorCode: 100,
-        errorMessage: `Unknown error occoured`,
-      };
-
       if (error instanceof Error) {
-        errorResponse = {
-          ...errorResponse,
-          errorMessage: `Error inserting data : ${error.message}`,
-        };
+        throw new BattleArenaError(
+          ErrorCodes.BA_INTERNAL_SERVER_ERROR,
+          ErrorMessages.BA_INTERNAL_SERVER_ERROR
+        );
       }
-      return errorResponse;
+      throw error;
     }
   };
 
-  findUserById = async (id: string): Promise<UserResponse | ErrorResponse> => {
+  findUserById = async (id: string): Promise<UserResponse> => {
     try {
       const userResponse: UserResponse = await db.tx(
         async (transaction: ITask<{}>) => {
@@ -61,27 +57,21 @@ class UserServiceImpl implements UserService {
         }
       );
       if (userResponse === null) {
-        let errorResponse: ErrorResponse = {
-          errorCode: 101,
-          errorMessage: `User does not exist`,
-        };
-        return errorResponse;
+        throw new BattleArenaError(
+          ErrorCodes.BA_BAD_REQUEST,
+          GenericUtils.formatString(ErrorMessages.BA_BAD_REQUEST, id)
+        );
       }
 
       return userResponse;
     } catch (error: unknown) {
-      let errorResponse: ErrorResponse = {
-        errorCode: 102,
-        errorMessage: `Unknown error occoured`,
-      };
-
       if (error instanceof Error) {
-        errorResponse = {
-          ...errorResponse,
-          errorMessage: `Error finding user : ${error.message}`,
-        };
+        throw new BattleArenaError(
+          ErrorCodes.BA_INTERNAL_SERVER_ERROR,
+          ErrorMessages.BA_INTERNAL_SERVER_ERROR
+        );
       }
-      return errorResponse;
+      throw error;
     }
   };
 }

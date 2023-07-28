@@ -14,20 +14,20 @@ class GlobalErrorHandler {
     reply.status(StatusCodes.STATUS_BAD_REQUEST).send(error);
   }
 
-  public resolve(error: Error, reply: FastifyReply) {
-    if (error instanceof BattleArenaError) {
+  public resolve(error: any, request: FastifyRequest, reply: FastifyReply) {
+    if (!error) {
+      this.handleNoHandlerFoundError(reply);
+    } else if (error instanceof BattleArenaError) {
       this.resolveBattleArenaError(error, reply);
-    } else if (error instanceof ValidationError) {
-      const validationError: ErrorObject<
-        string,
-        Record<string, any>,
-        unknown
-      >[] = (error as any).errors;
+    } else if (
+      error.statusCode === 400 &&
+      error.code === "FST_ERR_VALIDATION"
+    ) {
       const badRequestBattleArenaError: BattleArenaError =
         this.buildBadRequestBattleArenaError(
           ErrorCodes.BA_BAD_REQUEST,
           ErrorMessages.BA_BAD_REQUEST,
-          validationError
+          error.validation
         );
       this.resolveBattleArenaError(badRequestBattleArenaError, reply);
     } else {
@@ -65,7 +65,9 @@ class GlobalErrorHandler {
       statusCode,
       GenericUtils.formatString(
         message,
-        `[${validationError.map((errorObj) => errorObj.message).join(",")}]`
+        `[${validationError
+          .map((errorObj) => JSON.stringify(errorObj.params))
+          .join(",")}]`
       )
     );
   }

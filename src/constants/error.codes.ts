@@ -6,6 +6,6 @@ export enum ErrorCodes {
 
 export enum ErrorMessages {
   BA_NOT_FOUND = "Requested resource {} was not found",
-  BA_BAD_REQUEST = "Invalid request, missing parameters: {}",
+  BA_BAD_REQUEST = "Invalid request, parameters: {}",
   BA_INTERNAL_SERVER_ERROR = "Internal error occoured",
 }

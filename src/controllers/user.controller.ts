@@ -16,14 +16,10 @@ class UserController {
     request: FastifyRequest<{ Body: UserRequest }>,
     reply: FastifyReply
   ): Promise<void> => {
-    const userResponse: UserResponse | ErrorResponse =
-      await this.userService.createUser(request.body);
-
-    if ("errorCode" in userResponse) {
-      reply.code(500).send(userResponse);
-    } else {
-      reply.code(201).send(userResponse);
-    }
+    const userResponse: UserResponse = await this.userService.createUser(
+      request.body
+    );
+    reply.code(201).send(userResponse);
   };
 
   getUserHandler = async (
@@ -31,16 +27,10 @@ class UserController {
     reply: FastifyReply
   ): Promise<void> => {
     if (request.params) {
-      const userResponse: UserResponse | ErrorResponse =
-        await this.userService.findUserById(request.params.id);
-
-      if ("errorCode" in userResponse) {
-        reply.code(500).send(userResponse);
-      } else {
-        reply.code(200).send(userResponse);
-      }
-    } else {
-      reply.code(400).send({ message: `invalid user id` });
+      const userResponse: UserResponse = await this.userService.findUserById(
+        request.params.id
+      );
+      reply.code(200).send(userResponse);
     }
   };
 }
